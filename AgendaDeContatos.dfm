@@ -46,7 +46,7 @@ object Form1: TForm1
     Height = 15
     Caption = 'Label5'
   end
-  object ListBox1: TListBox
+  object ListBoxContatos: TListBox
     Left = 8
     Top = 104
     Width = 121
