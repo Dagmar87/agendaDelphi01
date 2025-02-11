@@ -29,6 +29,12 @@ type
     Label4: TLabel;
     btnAtualizar: TButton;
     Label5: TLabel;
+    procedure btnAdicionarClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnRemoverClick(Sender: TObject);
+    procedure btnBuscarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnAtualizarClick(Sender: TObject);
   private
     { Private declarations }
     ListaContatos: TList<TContato>;
@@ -137,19 +143,79 @@ begin
 end;
 
 procedure TForm1.CarregarContatos;
+var
+  Contato: TContato;
+  ContatoFile: TextFile;
+  Linha: string;
+  FileName: String;
 
 begin
+  FileName := ExtractFilePath(Application.ExeName) + 'Contatos.txt';
 
+  if FileExists(FileName) then
+  begin
+    AssignFile(ContatoFile, FileName);
+    Reset(ContatoFile);
+    while not Eof(ContatoFile) do
+    begin
+      Readln(ContatoFile, Linha);
+      Contato.Nome := Copy(Linha, 1, Pos('|', Linha) - 1);
+      Delete(Linha, 1, Pos('|', Linha));
+      Contato.Telefone := Copy(Linha, 1, Pos('|', Linha) - 1);
+      Delete(Linha, 1, Pos('|', Linha));
+      Contato.Email := Linha;
+      ListaContatos.Add(Contato);
+    end;
+    CloseFile(ContatoFile);
+    AtualizarListaContatos;
+  end;
 end;
 
 procedure TForm1.LimparBusca;
 begin
-
+  edtBuscar.Clear;
+  edtBuscar.SetFocus;
 end;
 
 procedure TForm1.LimparCampos;
 begin
+  edtNome.Clear;
+  edtTelefone.Clear;
+  edtEmail.Clear;
+  edtNome.SetFocus;
+end;
 
+procedure TForm1.btnAdicionarClick(Sender: TObject);
+begin
+  AdicionarContato;
+  LimparCampos;
+end;
+
+procedure TForm1.btnAtualizarClick(Sender: TObject);
+begin
+  AtualizarListaContatos;
+end;
+
+procedure TForm1.btnBuscarClick(Sender: TObject);
+begin
+  BuscarContato;
+  LimparBusca;
+end;
+
+procedure TForm1.btnEditarClick(Sender: TObject);
+begin
+  EditarContato;
+end;
+
+procedure TForm1.btnRemoverClick(Sender: TObject);
+begin
+  RemoverContato;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  ListaContatos := TList<TContato>.Create;
+  CarregarContatos;
 end;
 
 end.
